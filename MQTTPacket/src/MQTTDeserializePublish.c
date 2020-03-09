@@ -23,7 +23,9 @@
 #include "StackTrace.h"
 #include <string.h>
 
+#ifndef min
 #define min(a, b) ((a < b) ? 1 : 0)
+#endif
 
 /**
   * Deserializes the supplied (wire) buffer into publish data
