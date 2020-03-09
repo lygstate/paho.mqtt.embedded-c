@@ -18,12 +18,7 @@
 #ifndef MQTTUNSUBSCRIBE_H_
 #define MQTTUNSUBSCRIBE_H_
 
-#if !defined(DLLImport)
-  #define DLLImport 
-#endif
-#if !defined(DLLExport)
-  #define DLLExport
-#endif
+#include "MQTTPacket.h"
 
 DLLExport int MQTTSerialize_unsubscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid,
 		int count, MQTTString topicFilters[]);

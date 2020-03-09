@@ -20,6 +20,8 @@
 #ifndef MQTTCONNECT_H_
 #define MQTTCONNECT_H_
 
+#include "MQTTPacket.h"
+
 enum connack_return_codes
 {
     MQTT_CONNECTION_ACCEPTED = 0,
@@ -29,14 +31,6 @@ enum connack_return_codes
     MQTT_BAD_USERNAME_OR_PASSWORD = 4,
     MQTT_NOT_AUTHORIZED = 5,
 };
-
-#if !defined(DLLImport)
-  #define DLLImport
-#endif
-#if !defined(DLLExport)
-  #define DLLExport
-#endif
-
 
 typedef union
 {

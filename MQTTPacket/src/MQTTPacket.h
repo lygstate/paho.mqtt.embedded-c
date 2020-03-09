@@ -33,6 +33,29 @@ extern "C" {
   #define DLLExport
 #endif
 
+#if defined(__BIG_ENDIAN__) \
+	|| defined(__ARMEB__) ||  defined(__THUMBEB__) || defined(__AARCH64EB__) \
+	|| defined(_MIPSEB) || defined(__MIPSEB) || defined(__MIPSEB__) \
+	|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)) \
+	|| (defined(__FLOAT_WORD_ORDER__) && (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__))
+#define MQTT_BIG_ENDIAN 1
+#define MQTT_LITTLE_ENDIAN 0
+#elif defined(__LITTLE_ENDIAN__) \
+	|| defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) \
+	|| defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) \
+	|| (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)) \
+	|| (defined(__FLOAT_WORD_ORDER__) && (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#define MQTT_BIG_ENDIAN 0
+#define MQTT_LITTLE_ENDIAN 1
+#else
+#define MQTT_BIG_ENDIAN 0
+#define MQTT_LITTLE_ENDIAN 0
+#endif
+
+#if MQTT_BIG_ENDIAN
+#define REVERSED
+#endif
+
 enum errors
 {
 	MQTTPACKET_BUFFER_TOO_SHORT = -2,
