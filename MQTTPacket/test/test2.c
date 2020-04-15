@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "test-util.h"
+
 #if !defined(_WINDOWS)
 	#include <sys/time.h>
   	#include <sys/socket.h>
@@ -118,23 +120,22 @@ void getopts(int argc, char** argv)
 #define LOGA_INFO 1
 #include <stdarg.h>
 #include <time.h>
-#include <sys/timeb.h>
 void MyLog(int LOGA_level, char* format, ...)
 {
 	static char msg_buf[256];
 	va_list args;
-	struct timeb ts;
+	struct timespec ts;
 
 	struct tm *timeinfo;
 
 	if (LOGA_level == LOGA_DEBUG && options.verbose == 0)
 	  return;
 
-	ftime(&ts);
-	timeinfo = localtime(&ts.time);
+	clock_gettime(CLOCK_REALTIME, &ts);
+	timeinfo = localtime(&ts.tv_sec);
 	strftime(msg_buf, 80, "%Y%m%d %H%M%S", timeinfo);
 
-	sprintf(&msg_buf[strlen(msg_buf)], ".%.3hu ", ts.millitm);
+	sprintf(&msg_buf[strlen(msg_buf)], ".%.3lu ", ts.tv_nsec / 1000000);
 
 	va_start(args, format);
 	vsnprintf(&msg_buf[strlen(msg_buf)], sizeof(msg_buf) - strlen(msg_buf), format, args);
@@ -248,7 +249,9 @@ void myassert(char* filename, int lineno, char* description, int value, char* fo
     	MyLog(LOGA_DEBUG, "Assertion succeeded, file %s, line %d, description: %s", filename, lineno, description);
 }
 
+#ifndef min
 #define min(a, b) ((a < b) ? a : b)
+#endif
 
 int checkMQTTStrings(MQTTString a, MQTTString b)
 {
@@ -480,7 +483,7 @@ int test2(struct Options options)
 	assert("msgids should be the same", msgid == msgid2, "msgids were different %d\n", msgid2);
 
 	assert("topics should be the same",
-					checkMQTTStrings(topicString, topicString2), "topics were different %s\n", ""); //topicString2);
+					checkMQTTStrings(topicString, topicString2), "topics were different %s\n", ""); /* topicString2 */
 
 	assert("payload lengths should be the same",
 				payloadlen == payloadlen2, "payload lengths were different %d\n", payloadlen2);
@@ -934,7 +937,7 @@ int test9(struct Options options)
 }
 
 
-int main(int argc, char** argv)
+int MQTTPacket_test2(int argc, char** argv)
 {
 	int rc = 0;
  	int (*tests[])() = {NULL, test1, test2, test3, test4, test5, test6, test7, test8, test9};

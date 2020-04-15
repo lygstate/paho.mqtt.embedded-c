@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>embedded-C</name>
+	<name>bsp-mqtt</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.cdt.managedbuilder.core.genmakebuilder</name>
+			<name>com.windriver.ide.core.wrbuilder</name>
 			<triggers>clean,full,incremental,</triggers>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
-			<triggers>full,incremental,</triggers>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>com.windriver.ide.core.wrnature</nature>
+		<nature>com.windriver.ide.core.wrcorenature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
-		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1586948147292</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-MQTTClient</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1583752408373</id>
+			<name>MQTTClient-C/src</name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-true-FreeRTOS|cc3200|VxWorks</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1583751368266</id>
+			<name>MQTTClient-C/samples/FreeRTOS</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-MQTTClient-C/samples/FreeRTOS</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

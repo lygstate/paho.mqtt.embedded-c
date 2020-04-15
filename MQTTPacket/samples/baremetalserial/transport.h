@@ -16,8 +16,8 @@
  *******************************************************************************/
 
 typedef struct {
-	int (*send)(unsigned char *address, unsigned int bytes); 	///< pointer to function to send 'bytes' bytes, returns the actual number of bytes sent
-	int (*recv)(unsigned char *address, unsigned int maxbytes); 	///< pointer to function to receive upto 'maxbytes' bytes, returns the actual number of bytes copied
+	int (*send)(unsigned char *address, unsigned int bytes); 	/* pointer to function to send 'bytes' bytes, returns the actual number of bytes sent */
+	int (*recv)(unsigned char *address, unsigned int maxbytes); 	/* pointer to function to receive upto 'maxbytes' bytes, returns the actual number of bytes copied */
 } transport_iofunctions_t;
 
 #define TRANSPORT_DONE	1

@@ -39,6 +39,8 @@
 #define ECONNRESET WSAECONNRESET
 #endif
 
+#include "test-util.h"
+
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 struct Options
@@ -103,23 +105,22 @@ void getopts(int argc, char** argv)
 #define LOGA_INFO 1
 #include <stdarg.h>
 #include <time.h>
-#include <sys/timeb.h>
 void MyLog(int LOGA_level, char* format, ...)
 {
 	static char msg_buf[256];
 	va_list args;
-	struct timeb ts;
+	struct timespec ts;
 
 	struct tm *timeinfo;
 
 	if (LOGA_level == LOGA_DEBUG && options.verbose == 0)
 	  return;
 
-	ftime(&ts);
-	timeinfo = localtime(&ts.time);
+	clock_gettime(CLOCK_REALTIME, &ts);
+	timeinfo = localtime(&ts.tv_sec);
 	strftime(msg_buf, 80, "%Y%m%d %H%M%S", timeinfo);
 
-	sprintf(&msg_buf[strlen(msg_buf)], ".%.3hu ", ts.millitm);
+	sprintf(&msg_buf[strlen(msg_buf)], ".%.3lu ", ts.tv_nsec / 1000000);
 
 	va_start(args, format);
 	vsnprintf(&msg_buf[strlen(msg_buf)], sizeof(msg_buf) - strlen(msg_buf), format, args);
@@ -544,7 +545,7 @@ exit:
 }
 
 
-int main(int argc, char** argv)
+int MQTTPacket_test3(int argc, char** argv)
 {
 	int rc = 0;
  	int (*tests[])() = {NULL, test1};

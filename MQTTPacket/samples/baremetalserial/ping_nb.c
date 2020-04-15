@@ -234,13 +234,13 @@ int samplesend(unsigned char *address, unsigned int bytes)
 {
 int len;
 
-	if(rand() > (RAND_MAX/2))	// 50% probability of being busy
+	if(rand() > (RAND_MAX/2))	/* 50% probability of being busy */
 		return 0;
-	if(rand() > (RAND_MAX/2)){	// 50% probability of sending half the requested data (no room in buffer)
+	if(rand() > (RAND_MAX/2)){	/* 50% probability of sending half the requested data (no room in buffer) */
 		if(bytes > 1)
 			bytes /= 2;
 	}
-	if((len = write(sockfd, address, bytes)) >= 0)
+	if((len = write(sockfd, (char *)address, bytes)) >= 0)
 		return len;
 	if(errno == EAGAIN)
 		return 0;
@@ -251,14 +251,14 @@ int samplerecv(unsigned char *address, unsigned int maxbytes)
 {
 int len;
 
-	if(rand() > (RAND_MAX/2))	// 50% probability of no data
+	if(rand() > (RAND_MAX/2))	/* 50% probability of no data */
 		return 0;
-	if(rand() > (RAND_MAX/2)){	// 50% probability of getting half the requested data (not arrived yet)
+	if(rand() > (RAND_MAX/2)){	/* 50% probability of getting half the requested data (not arrived yet) */
 		if(maxbytes > 1){
 			maxbytes /= 2;
 		}
 	}
-	if((len = read(sockfd, address, maxbytes)) >= 0)
+	if((len = read(sockfd, (char *)address, maxbytes)) >= 0)
 		return len;
 	if(errno == EAGAIN)
 		return 0;

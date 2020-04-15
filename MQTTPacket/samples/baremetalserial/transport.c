@@ -36,19 +36,19 @@ MQTTPacket_read() has a function pointer for a function call to get the data to 
 to know the caller or other indicator (the socket id): int (*getfn)(unsigned char*, int)
 */
 static transport_iofunctions_t *io = NULL;
-static unsigned char *from = NULL;		// to keep track of data sending
-static int howmany;				// ditto
+static unsigned char *from = NULL;		/* to keep track of data sending */
+static int howmany;				/* ditto */
 
 
 void transport_sendPacketBuffernb_start(int sock, unsigned char* buf, int buflen)
 {
-	from = buf;			// from[sock] or mystruct[sock].from
-	howmany = buflen;		// myhowmany[sock] or mystruct[sock].howmany
+	from = buf;			/* from[sock] or mystruct[sock].from */
+	howmany = buflen;		/* myhowmany[sock] or mystruct[sock].howmany */
 }
 
 int transport_sendPacketBuffernb(int sock)
 {
-transport_iofunctions_t *myio = io;	// io[sock] or mystruct[sock].io
+transport_iofunctions_t *myio = io;	/* io[sock] or mystruct[sock].io */
 int len;
 
 	/* you should have called open() with a valid pointer to a valid struct and 
@@ -88,8 +88,8 @@ int transport_getdata(unsigned char* buf, int count)
 
 int transport_getdatanb(void *sck, unsigned char* buf, int count)
 {
-//int sock = *((int *)sck); 		/* sck: pointer to whatever the system may use to identify the transport */
-transport_iofunctions_t *myio = io;	// io[sock] or mystruct[sock].io
+/* int sock = *((int *)sck); 		// sck: pointer to whatever the system may use to identify the transport */
+transport_iofunctions_t *myio = io;	/* io[sock] or mystruct[sock].io */
 int len;
 	
 	/* you should have called open() with a valid pointer to a valid struct before calling this */
@@ -106,12 +106,12 @@ return >=0 for a connection descriptor, <0 for an error code
 */
 int transport_open(transport_iofunctions_t *thisio)
 {
-int idx=0;	// for multiple connections, you might, basically turn myio into myio[MAX_CONNECTIONS],
+int idx=0;	/* for multiple connections, you might, basically turn myio into myio[MAX_CONNECTIONS], */
 
-	//if((idx=assignidx()) >= MAX_CONNECTIONS)	// somehow assign an index,
-	//	return TRANSPORT_ERROR;
-	io = thisio;					// store myio[idx] = thisio, or mystruct[idx].io = thisio, 
-	return idx;					// and return the index used
+	/* if((idx=assignidx()) >= MAX_CONNECTIONS)	// somehow assign an index, */
+	/*	return TRANSPORT_ERROR; */
+	io = thisio;					/* store myio[idx] = thisio, or mystruct[idx].io = thisio, */ 
+	return idx;					/* and return the index used */
 }
 
 int transport_close(int sock)

@@ -6,3 +6,5 @@
 /doc/MQTTClient/
 /doc/MQTTPacket/
 /doc/MQTTClient-C/
+PPC32gnu
+.coveragescope

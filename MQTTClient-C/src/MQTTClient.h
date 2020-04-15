@@ -36,14 +36,36 @@
 
 #include "MQTTPacket.h"
 
-#if defined(MQTTCLIENT_PLATFORM_HEADER)
-/* The following sequence of macros converts the MQTTCLIENT_PLATFORM_HEADER value
- * into a string constant suitable for use with include.
- */
-#define xstr(s) str(s)
-#define str(s) #s
-#include xstr(MQTTCLIENT_PLATFORM_HEADER)
+#ifndef MQTT_TASK
+#define MQTT_TASK
 #endif
+
+ /* The Platform specific header must define the Network, Timer, Mutex and Thread structures and functions
+  * which operate on them. */
+typedef struct Timer
+{
+    int64_t tv_sec;  /* Seconds. */
+    int32_t tv_nsec; /* Nanoseconds. */
+} Timer;
+
+typedef struct Network
+{
+    int64_t my_socket;
+    int (*mqttread) (struct Network*, unsigned char*, int, int);
+    int (*mqttwrite) (struct Network*, unsigned char*, int, int);
+} Network;
+
+typedef struct Mutex
+{
+    int64_t sem;
+} Mutex;
+
+typedef struct Thread
+{
+    int64_t task;
+} Thread;
+
+typedef void (*ThreadEntryFunction)(void*);
 
 #define MAX_PACKET_ID 65535 /* according to the MQTT specification - do not change! */
 
@@ -56,22 +78,24 @@ enum QoS { QOS0, QOS1, QOS2, SUBFAIL=0x80 };
 /* all failure return codes must be negative */
 enum returnCode { BUFFER_OVERFLOW = -2, FAILURE = -1, SUCCESS = 0 };
 
-/* The Platform specific header must define the Network and Timer structures and functions
- * which operate on them.
- *
-typedef struct Network
-{
-	int (*mqttread)(Network*, unsigned char* read_buffer, int, int);
-	int (*mqttwrite)(Network*, unsigned char* send_buffer, int, int);
-} Network;*/
 
 /* The Timer structure must be defined in the platform specific header,
  * and have the following functions to operate on it.  */
-extern void TimerInit(Timer*);
-extern char TimerIsExpired(Timer*);
-extern void TimerCountdownMS(Timer*, unsigned int);
-extern void TimerCountdown(Timer*, unsigned int);
-extern int TimerLeftMS(Timer*);
+DLLExport void TimerInit(Timer*);
+DLLExport char TimerIsExpired(Timer*);
+DLLExport void TimerCountdownMS(Timer*, unsigned int);
+DLLExport void TimerCountdown(Timer*, unsigned int);
+DLLExport int TimerLeftMS(Timer*);
+
+DLLExport void NetworkInit(Network*);
+DLLExport int NetworkConnect(Network*, char*, int);
+DLLExport void NetworkDisconnect(Network*);
+
+DLLExport void MutexInit(Mutex*);
+DLLExport int MutexLock(Mutex*);
+DLLExport int MutexUnlock(Mutex*);
+
+DLLExport int ThreadStart(Thread*, ThreadEntryFunction entry, void* arg);
 
 typedef struct MQTTMessage
 {

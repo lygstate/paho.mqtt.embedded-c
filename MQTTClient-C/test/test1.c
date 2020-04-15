@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if !defined(_WINDOWS)
+#if !defined(_WIN32)
   #include <sys/time.h>
   #include <sys/socket.h>
   #include <unistd.h>
@@ -35,7 +35,7 @@
   #define setenv(a, b, c) _putenv_s(a, b)
 #endif
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#include "../test/test-util.h"
 
 void usage(void)
 {
@@ -59,8 +59,8 @@ struct Options
   1883,
 	"localhost",
 	1885,
-	0, //verbose
-	0, //test_no
+	0, /* verbose */
+	0, /* test_no */
 	4,
 	1,
 };
@@ -149,23 +149,24 @@ void getopts(int argc, char** argv)
 #define LOGA_INFO 1
 #include <stdarg.h>
 #include <time.h>
-#include <sys/timeb.h>
 void MyLog(int LOGA_level, char* format, ...)
 {
+	struct timespec t;
 	static char msg_buf[256];
 	va_list args;
-	struct timeb ts;
-
 	struct tm *timeinfo;
 
 	if (LOGA_level == LOGA_DEBUG && options.verbose == 0)
 	  return;
 
-	ftime(&ts);
-	timeinfo = localtime(&ts.time);
-	strftime(msg_buf, 80, "%Y%m%d %H%M%S", timeinfo);
+	clock_gettime(CLOCK_REALTIME, &t);
+	time_t ti = t.tv_sec;
+	/* t.tv_usec and t.tv_sec are valid */
+	timeinfo = localtime(&ti);
 
-	sprintf(&msg_buf[strlen(msg_buf)], ".%.3hu ", ts.millitm);
+	strftime(msg_buf, 80, "%Y-%m-%d %H:%M:%S", timeinfo);
+
+	sprintf(&msg_buf[strlen(msg_buf)], ".%.3hu ", (int)(t.tv_nsec / 1000000));
 
 	va_start(args, format);
 	vsnprintf(&msg_buf[strlen(msg_buf)], sizeof(msg_buf) - strlen(msg_buf), format, args);
@@ -266,10 +267,14 @@ void myassert(char* filename, int lineno, char* description, int value, char* fo
 		va_list args;
 
 		++failures;
-		MyLog(LOGA_INFO, "Assertion failed, file %s, line %d, description: %s\n", filename, lineno, description);
+		MyLog(LOGA_INFO, "Assertion failed, file %s, line %d, description: %s ", filename, lineno, description);
 
 		va_start(args, format);
 		vprintf(format, args);
+		va_end(args);
+
+		va_start(args, format);
+		vprintf("\n", args);
 		va_end(args);
 
 		cur_output += sprintf(cur_output, "<failure type=\"%s\">file %s, line %d </failure>\n",
@@ -691,7 +696,7 @@ int test3(struct Options options)
 
   check_subs_exist(&c, test_topic, 1);
 
-  // cause a connection FAILURE
+  /* cause a connection FAILURE */
   memset(&pubmsg, '\0', sizeof(pubmsg));
   pubmsg.payload = (void*)"TERMINATE";
   pubmsg.payloadlen = strlen((char*)pubmsg.payload);
@@ -701,7 +706,7 @@ int test3(struct Options options)
   rc = MQTTPublish(&c, "MQTTSAS topic", &pubmsg);
   assert("Good rc from publish", rc == SUCCESS, "rc was %d", rc);
 
-  // wait for failure to be noticed by keepalive
+  /* wait for failure to be noticed by keepalive */
   wait_seconds = 20;
   while (MQTTIsConnected(&c) && (wait_seconds-- > 0))
   {
@@ -1017,7 +1022,7 @@ exit:
 }
 #endif
 
-int main(int argc, char** argv)
+int MQTTClient_C_test1(int argc, char** argv)
 {
 	int rc = 0;
  	int (*tests[])() = {NULL, test1, test2, test3};

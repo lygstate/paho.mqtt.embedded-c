@@ -40,7 +40,9 @@
 #else
 #define INVALID_SOCKET SOCKET_ERROR
 #include <sys/socket.h>
+#ifndef __vxworks
 #include <sys/param.h>
+#endif
 #include <sys/time.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -74,7 +76,7 @@ static int mysock = INVALID_SOCKET;
 int transport_sendPacketBuffer(int sock, unsigned char* buf, int buflen)
 {
 	int rc = 0;
-	rc = write(sock, buf, buflen);
+	rc = write(sock, (char*)buf, buflen);
 	return rc;
 }
 
@@ -82,7 +84,7 @@ int transport_sendPacketBuffer(int sock, unsigned char* buf, int buflen)
 int transport_getdata(unsigned char* buf, int count)
 {
 	int rc = recv(mysock, buf, count, 0);
-	//printf("received %d bytes count %d\n", rc, (int)count);
+	/* printf("received %d bytes count %d\n", rc, (int)count); */
 	return rc;
 }
 

@@ -42,7 +42,11 @@
 
 */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef __vxworks
 #include <memory.h>
+#endif
 #include "MQTTClient.h"
 
 #include <stdio.h>
@@ -188,11 +192,11 @@ void messageArrived(MessageData* md)
 		printf("%.*s", (int)message->payloadlen, (char*)message->payload);
 	else
 		printf("%.*s%s", (int)message->payloadlen, (char*)message->payload, opts.delimiter);
-	//fflush(stdout);
+	/* fflush(stdout); */
 }
 
 
-int main(int argc, char** argv)
+int stdoutstub(int argc, char** argv)
 {
 	int rc = 0;
 	unsigned char buf[100];
